@@ -19,9 +19,7 @@ filosofia de **Prawn**:
 
 *+entendible,-codigo,+productividad,+velocidad*
 
-En que podria usar Prawn:
-**DevOps
-Backend**
+
 
 # Lexer 
 keywords: var,write
