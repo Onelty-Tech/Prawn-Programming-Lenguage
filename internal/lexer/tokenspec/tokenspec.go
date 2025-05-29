@@ -7,36 +7,78 @@ type Token struct {
 	Literal  string
 	Position int
 	Line     int
-	Length   int
 }
 
 const (
-	ILLEGAL   = "ILLEGAL"
-	EOF       = "EOF"
-	IDENT     = "IDENT"
-	INT       = "INT"
-	STRING    = "STRING"
-	LPAREN    = "LPAREN"
-	RPAREN    = "RPAREN"
-	ASSIGN    = "ASSIGN"
-	PLUS      = "PLUS"
-	MINUS     = "MINUS"
-	SEMICOLON = "SEMICOLON"
+	ILLEGAL          = "ILLEGAL"          // ILLEGAL VALUE
+	EOF              = "EOF"              //EOF NUMBER
+	IDENT            = "IDENT"            // IDENT VARIABLE NAME,FUNCTION NAME ETC
+	INT              = "INT"              // INT example: (var edad = 25;)
+	STRING           = "STRING"           // STRING example: (var nombre = "Pedro")
+	LPAREN           = "LPAREN"           //LPAREN "("
+	RPAREN           = "RPAREN"           //RPAREN ")"
+	ASSIGN           = "ASSIGN"           //ASSIGN "="
+	PLUS             = "PLUS"             // PLUS "+"
+	MINUS            = "MINUS"            // MINUS "-"
+	ASTERISK         = "ASTERISK"         //ASTERISK "*"
+	SLASH            = "SLASH"            //SLASH "/"
+	MOD              = "MOD"              //MOD "%"
+	SEMICOLON        = "SEMICOLON"        //SEMICOLON ";"
+	EQUAL            = "EQUAL"            //EQUAL "=="
+	NOT_EQUAL        = "NOT_EQUAL"        //NOT_EQUAL "!="
+	LESS             = "LESS"             // LESS "<"
+	GREATER          = "GREATER"          //GREATER ">"
+	LESS_OR_EQUAL    = "LESS_OR_EQUAL"    // LESS_EQUAL "<="
+	GREATER_OR_EQUAL = "GREATER_OR_EQUAL" //GREATER_EQUAL ">="
+	BANG             = "BANG"             //BANG "!"
 
 	//keywords
 	VAR   = "VAR"
 	WRITE = "WRITE"
 )
 
+// Lo usa el lexer nadamas
+var SymbolTokens = map[string]TokenType{
+	//Simbolos unitarios
+	"+": PLUS,
+	"-": MINUS,
+	"*": ASTERISK,
+	"/": SLASH,
+	"%": MOD,
+	"=": ASSIGN,
+	"(": LPAREN,
+	")": RPAREN,
+	";": SEMICOLON,
+	"!": BANG,
+	"<": LESS,
+	">": GREATER,
+
+	// Multi caracters
+	"==": EQUAL,
+	"!=": NOT_EQUAL,
+	"<=": LESS_OR_EQUAL,
+	">=": GREATER_OR_EQUAL,
+}
+
+// Lo usa el parser nadamas
+var SymbolsArithmetic = map[string]string{
+	"+": PLUS,
+	"-": MINUS,
+	"*": ASTERISK,
+	"/": SLASH,
+	"%": MOD,
+}
+
+// Lo usan el parser y lexer
 var Keywords = map[string]TokenType{
 	"write": WRITE,
 	"var":   VAR,
 }
 
 // funcion para crear el token que usa la 'struct' TokenType y 'c' que es el currentChar
-func NewToken(tokenType TokenType, ch byte, position int, line int, length int) Token {
+func NewToken(tokenType TokenType, literal string, position int, line int) Token {
 	//retorna el token con el tipo y el literal
-	return Token{Type: tokenType, Literal: string(ch), Position: position, Line: line, Length: length}
+	return Token{Type: tokenType, Literal: literal, Position: position, Line: line}
 }
 
 func LookupIdent(ident string) TokenType {
