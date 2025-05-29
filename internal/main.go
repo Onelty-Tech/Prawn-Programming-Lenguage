@@ -45,7 +45,7 @@ func main() {
 			fmt.Printf("WriteDeclare#%d:\n", i+1)
 			payload := writeDecl.(map[string]map[string]interface{})["Payload"]
 			value := payload["Value"]
-			fmt.Printf("Value: %s", value)
+			fmt.Printf("Value: %s\n", value)
 		}
 	}
 }

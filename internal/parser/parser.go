@@ -3,8 +3,6 @@ package parser
 import (
 	"fmt"
 	"prawn/lexer/tokenspec"
-	"prawn/utils/lexer/review"
-	"prawn/utils/parser/errors"
 	"strconv"
 )
 
@@ -16,21 +14,6 @@ type Parser struct {
 
 // Node contiene todo tipo de datos
 type Node interface{}
-
-// contiene la declaracion de una variable tipo(Name "miVariable" Value: NumberExpr)
-type VarDeclare[T any] struct {
-	Name  string
-	Value T
-}
-
-func (varDecl *VarDeclare[T]) Payload() map[string]map[string]interface{} {
-	return map[string]map[string]interface{}{
-		"Payload": {
-			"Ident": varDecl.Name,
-			"Value": varDecl.Value,
-		},
-	}
-}
 
 // contiene una expresion tipo(x + 12)
 type BinaryExpr struct {
@@ -51,18 +34,6 @@ type StringExpr struct {
 // contiene el nombre de variables
 type VarExpr struct {
 	Name string
-}
-
-type WriteDecl struct {
-	Value Node
-}
-
-func (wrt *WriteDecl) Payload() map[string]map[string]interface{} {
-	return map[string]map[string]interface{}{
-		"Payload": {
-			"Value": wrt.Value,
-		},
-	}
 }
 
 // el constructor de la 'struct'
@@ -145,89 +116,6 @@ func (parser *Parser) CreateBinaryExpression(leftValue Node) *BinaryExpr {
 		Left:  leftValue,
 		Op:    OpValue.Literal,
 		Right: rightValue,
-	}
-}
-
-// Parsea write("Hola Mundo")
-func (parser *Parser) ParseWriteDecl() *WriteDecl {
-	/*current token 'write' asi que asemos un parser.NextToken
-	y pasamos al siguiente token
-	*/
-	parser.NextToken()
-	//el current token '(' y verificamos si existe si no agregamos el error y retornamos nil
-	if parser.currentToken().Type != tokenspec.LPAREN {
-		parser.errors = append(parser.errors, "Expected '(' but found '%s'.", parser.currentToken().Literal)
-		return nil
-	}
-	//pasa al contenido
-	parser.NextToken()
-	//aqui guarda el contenido en un tipo de dato 'Node'
-	writeContentValue := parser.ParseExpressionType()
-	//pasa al siguiente token que deberia de ser ')'
-	parser.NextToken()
-	if parser.currentToken().Type != tokenspec.RPAREN {
-		parser.errors = append(parser.errors, "Expected ')' but found '%s'.", parser.currentToken().Literal)
-		return nil
-	}
-	parser.NextToken()
-	if parser.currentToken().Type != tokenspec.SEMICOLON {
-		parser.errors = append(parser.errors, "Expected ';' but found '%s'.", parser.currentToken().Literal)
-		return nil
-	}
-	return &WriteDecl{
-		Value: writeContentValue,
-	}
-}
-
-func (parser *Parser) ParseVarDeclare() *VarDeclare[any] {
-	//pasa al siguiente token 'IDENT' (nombre de la variable)
-	parser.NextToken()
-	if parser.currentToken().Type != tokenspec.IDENT {
-		parser.errors = append(parser.errors, errors.CreateErrorExpected(parser.position, 2, tokenspec.IDENT, string(parser.currentToken().Type)))
-		return nil
-	}
-	//aguarda el nombre de la variable
-	varName := &VarExpr{Name: parser.currentToken().Literal}
-	//pasa al siguiente token 'ASSIGN'(=)
-	parser.NextToken()
-	// si no encuentra el token tira error y lo almacena en un slice de errores
-	if parser.currentToken().Type != tokenspec.ASSIGN {
-		//hay que mejorar este mensaje de error
-		parser.errors = append(parser.errors, errors.CreateErrorExpected(parser.position, 2, tokenspec.ASSIGN, string(parser.currentToken().Type)))
-		fmt.Println(parser.errors)
-		//no retorna nada
-		return nil
-	}
-	/*si no se encontro ningun error sigue y lo proximo deberia ser
-	el contenido
-	*/
-	parser.NextToken()
-	if review.IsArithmeticSymbol(parser.previewNextToken().Literal) {
-		varValueLeft := parser.ParseExpressionType()
-		varValue := parser.CreateBinaryExpression(varValueLeft)
-		if parser.currentToken().Type != tokenspec.SEMICOLON {
-			fmt.Println("Error expected ';' xd")
-			parser.errors = append(parser.errors, fmt.Sprintf("Expected ';' but found '%s'", parser.currentToken().Literal))
-			return nil
-		}
-		/*avanza al siguiente token para no dejar al currentToken con el mismo si no se pone esto
-		podria causar error*/
-		parser.NextToken()
-		return &VarDeclare[any]{
-			Name:  varName.Name,
-			Value: *varValue,
-		}
-	}
-	varValue := parser.ParseExpressionType()
-	parser.NextToken()
-	if parser.currentToken().Type != tokenspec.SEMICOLON {
-		parser.errors = append(parser.errors, fmt.Sprintf("Expected ';' but found '%s'", parser.currentToken().Literal))
-		return nil
-	}
-	parser.NextToken()
-	return &VarDeclare[any]{
-		Name:  varName.Name,
-		Value: varValue,
 	}
 }
 
