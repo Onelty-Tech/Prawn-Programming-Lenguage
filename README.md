@@ -28,10 +28,11 @@ filosofia de **Prawn**:
 keywords: var,write
 tokentypes: MINUS,PLUS,LPAREN,RPAREN,SEMICOLON,STRING,INT
 --
+Terminado🟩
 
 # Parser
 
-Creating in **other** branch
+Terminado🟩
 
 # Interpreter
 
