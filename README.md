@@ -2,10 +2,13 @@
  Lenguaje de programacion para aprender
 
 
-# Objetivo
-write("Hola Mundo")
-var x = 125
---
+# Ejemplo
+```
+var name = "Pedro";
+write(name);
+var number = 120;
+write(number);
+```
 
 # About
 
@@ -33,9 +36,4 @@ Creating in **other** branch
 # Interpreter
 
 Funcionando Mal 😂
-```
-var name = "Pedro";
-write(name);
-var number = 120;
-write(number);
-```
+
