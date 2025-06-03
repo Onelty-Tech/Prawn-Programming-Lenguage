@@ -32,4 +32,10 @@ Creating in **other** branch
 
 # Interpreter
 
-Soon...
+Funcionando Mal 😂
+```
+var name = "Pedro";
+write(name);
+var number = 120;
+write(number);
+```
